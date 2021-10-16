@@ -1,0 +1,6 @@
+{
+	"appId": "lourd.ionic.starter",
+	"appName": "myapp",
+	"webDir": "dist",
+	"bundledWebRuntime": false
+}
