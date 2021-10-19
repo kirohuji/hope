@@ -1,0 +1,4 @@
+ion-router-outlet.inner-router {
+  margin-top: var(--ion-safe-area-top);
+  /* margin-bottom: var(--ion-safe-area-bottom); */
+}

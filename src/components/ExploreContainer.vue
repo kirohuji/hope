@@ -1,18 +1,30 @@
 <template>
   <div id="container">
     <strong>{{ name }}</strong>
-    <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+    <ion-icon name="accessibility-outline"></ion-icon>
+    <p>
+      Explore
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://ionicframework.com/docs/components"
+        >UI Components</a
+      >
+    </p>
   </div>
 </template>
 
 <script lang="ts">
-
+import { IonIcon } from "@ionic/vue";
 export default {
-  name: 'ExploreContainer',
+  name: "ExploreContainer",
+  components: {
+    IonIcon,
+  },
   props: {
-    name: String
-  }
-}
+    name: String,
+  },
+};
 </script>
 
 <style scoped>
