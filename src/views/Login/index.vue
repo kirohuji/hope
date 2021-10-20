@@ -1,0 +1,126 @@
+<template>
+  <ion-page>
+    <ion-content :fullscreen="true">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>登录</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <img src="/slide-1.png">
+      <div style="margin: 16px 16px">
+
+        <ion-input
+          class="login-input"
+          clear-input
+          placeholder="手机号、邮件、用户名"
+        ></ion-input>
+
+        <ion-input
+          class="login-input"
+          clear-input
+          placeholder="密码"
+        ></ion-input>
+        <ion-input
+          class="login-input"
+          clear-input
+          placeholder="确定密码"
+          v-if="mode==='register'"
+        ></ion-input>
+        <div>
+          <ion-button expand="block">{{mode==="login"?"登录":"注册"}}</ion-button>
+        </div>
+        <div class="divider">
+          <div class="divider-text">or</div>
+        </div>
+        <div>
+          <ion-button
+            expand="block"
+            @click="changeMode"
+          >{{mode==="login"?"注册":"登录"}}</ion-button>
+        </div>
+      </div>
+    </ion-content>
+  </ion-page>
+</template>
+
+<script>
+import {
+  IonPage,
+  IonContent,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonInput,
+  IonButton
+} from '@ionic/vue'
+import { defineComponent } from "vue";
+import { arrowBackOutline } from "ionicons/icons"
+export default defineComponent({
+  name: 'Personal',
+  components: {
+    IonPage,
+    IonContent,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButton,
+    IonInput
+  },
+  setup () {
+    return {
+      arrowBackOutline
+    }
+  },
+  data () {
+    return {
+      mode: 'login'
+    }
+  },
+  methods: {
+    changeMode () {
+      if (this.mode === 'login') {
+        this.mode = "register"
+      } else {
+        this.mode = "login"
+      }
+    }
+  }
+})
+</script>
+
+<style scoped>
+.login-input {
+  background-color: #f1f1f1bf;
+  border-radius: 4px;
+  --padding-start: 8px !important;
+  /* padding-left: 8px !important; */
+  margin-bottom: 16px;
+}
+img {
+  max-height: 50%;
+  width: auto;
+  max-width: 90%;
+  margin: 10px 40px;
+  /* margin: auto; */
+  pointer-events: none;
+}
+ion-back-button {
+  display: block;
+}
+.divider {
+  width: 100%;
+  height: 1px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  position: relative;
+  background-color: #b3b3b35c;
+}
+.divider-text {
+  position: absolute;
+  background-color: #fff;
+  padding: 0 20px;
+  color: #303133;
+  left: 40%;
+  transform: translateY(-50%);
+}
+</style>

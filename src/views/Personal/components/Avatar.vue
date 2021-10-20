@@ -1,32 +1,45 @@
 <template>
-  <div class="info-layout">
-    <pan-thumb
-      image="/madison.jpg"
-      height="68px"
-      width="68px"
-      :hoverable="false"
-    />
-    <b>Lourd</b>
-    <image-cropper
-      v-show="imagecropperShow"
-      :key="imagecropperKey"
-      :width="300"
-      :height="300"
-      url="https://httpbin.org/post"
-      lang-type="en"
-      @close="close"
-      @crop-upload-success="cropSuccess"
-    />
+  <div>
+    <div class="info-layout">
+      <pan-thumb
+        image="/madison.jpg"
+        height="68px"
+        width="68px"
+        :hoverable="false"
+        @click="imagecropperShow = true"
+      />
+      <b>Lourd</b>
+    </div>
+    <ion-modal
+      :is-open="imagecropperShow"
+      css-class="image-modal"
+      swipeToClose
+      @onDidDismiss="imagecropperShow=false"
+    >
+      <image-cropper
+        v-show="imagecropperShow"
+        :key="imagecropperKey"
+        :width="300"
+        :height="300"
+        url="https://httpbin.org/post"
+        lang-type="en"
+        @close="close"
+        @crop-upload-success="cropSuccess"
+      />
+    </ion-modal>
+
   </div>
 </template>
 
 <script>
 import PanThumb from '@/components/PanThumb'
 import ImageCropper from "@/components/ImageCropper";
+import {  IonModal } from '@ionic/vue' 
 export default {
   components: {
     PanThumb,
-    ImageCropper
+    ImageCropper,
+    IonModal
   },
   props: {
     user: {

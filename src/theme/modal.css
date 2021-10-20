@@ -1,5 +1,12 @@
-.modal-wrapper {
+.filter-modal .modal-wrapper {
   position: absolute;
   bottom: 0;
   height: 40% !important;
+}
+
+.image-modal .modal-wrapper {
+  background: none;
+  /* position: absolute;
+  bottom: 0;
+  height: 100% !important; */
 }

@@ -2,3 +2,6 @@ ion-router-outlet.inner-router {
   margin-top: var(--ion-safe-area-top);
   /* margin-bottom: var(--ion-safe-area-bottom); */
 }
+/* .ios {
+  --ion-background-color: #d7d7d759 !important;
+} */

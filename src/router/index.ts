@@ -9,8 +9,25 @@ const routes: Array<RouteRecordRaw> = [
   // // },
   {
     path: "/",
-    redirect: "/welcome"
+    redirect: "/welcome",
   },
+  {
+    path: "/settings",
+    component: () => import("@/views/Settings/index.vue"),
+  },
+  {
+    path: "/profile",
+    component: () => import("@/views/Settings/subViews/Profile.vue"),
+  },
+  {
+    path: "/login",
+    component: () => import("@/views/Login/index.vue"),
+  },
+  {
+    path: "/tab",
+    component: () => import("@/views/Tab1.vue"),
+  },
+
   {
     path: "/welcome",
     component: Welcome,
@@ -32,8 +49,8 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("@/views/Personal/index.vue"),
       },
       {
-        path: "tab3",
-        component: () => import("@/views/Tab3.vue"),
+        path: "center",
+        component: () => import("@/views/Center/index.vue"),
       },
     ],
   },

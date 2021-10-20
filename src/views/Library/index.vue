@@ -78,7 +78,7 @@
       </ion-list>
       <ion-modal
         :is-open="isOpenRef"
-        css-class="my-custom-class"
+        css-class="filter-modal"
         swipeToClose
         @onDidDismiss="setOpen(false)"
       >
