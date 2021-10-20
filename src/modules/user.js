@@ -1,14 +1,4 @@
-const module = "users";
-export class User {
-  constructor(user_id, name, node_id, remark, status, node_name) {
-    this.user_id = user_id;
-    this.node_id = node_id;
-    this.name = name;
-    this.remark = remark;
-    this.status = status;
-    this.node_name = node_name;
-  }
-}
+const module = "users"
 export class UserService {
   constructor(api) {
     this.makeUserService(api);

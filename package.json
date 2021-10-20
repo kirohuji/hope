@@ -24,14 +24,20 @@
     "@ionic/vue": "^5.4.0",
     "@ionic/vue-router": "^5.4.0",
     "axios": "^0.23.0",
+    "blob-to-buffer": "^1.2.9",
     "cordova-res": "^0.15.3",
     "core-js": "^3.6.5",
+    "epubjs": "^0.3.88",
+    "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "native-run": "^1.5.0",
     "node-sass": "^4.14.1",
+    "nprogress": "^0.2.0",
     "sass-loader": "^7.3.1",
+    "save-file": "^2.3.1",
     "vue": "^3.2.1",
-    "vue-router": "^4.0.0-0"
+    "vue-router": "^4.0.0-0",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@capacitor/cli": "3.2.5",

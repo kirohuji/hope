@@ -13,21 +13,27 @@
           class="login-input"
           clear-input
           placeholder="手机号、邮件、用户名"
+          v-model="account.username"
         ></ion-input>
 
         <ion-input
           class="login-input"
           clear-input
           placeholder="密码"
+          v-model="account.password"
         ></ion-input>
         <ion-input
           class="login-input"
           clear-input
           placeholder="确定密码"
+          v-model="account.confirm"
           v-if="mode==='register'"
         ></ion-input>
         <div>
-          <ion-button expand="block">{{mode==="login"?"登录":"注册"}}</ion-button>
+          <ion-button
+            expand="block"
+            @click="submit"
+          >{{mode==="login"?"登录":"注册"}}</ion-button>
         </div>
         <div class="divider">
           <div class="divider-text">or</div>
@@ -55,6 +61,7 @@ import {
 } from '@ionic/vue'
 import { defineComponent } from "vue";
 import { arrowBackOutline } from "ionicons/icons"
+import { service, authService } from "./service";
 export default defineComponent({
   name: 'Personal',
   components: {
@@ -73,10 +80,26 @@ export default defineComponent({
   },
   data () {
     return {
+      account: {
+        password: '',
+        username: '',
+      },
       mode: 'login'
     }
   },
   methods: {
+    submit () {
+      if (this.mode === 'login') {
+        authService.login(this.account).then((res) => {
+          localStorage.setItem("user", JSON.stringify(res));
+          alert('登录成功')
+        });
+      } else {
+        service.insert(this.account).then(() => {
+          alert('注册成功')
+        });
+      }
+    },
     changeMode () {
       if (this.mode === 'login') {
         this.mode = "register"

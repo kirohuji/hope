@@ -19,7 +19,7 @@
 
         <ion-tab-button
           tab="personal"
-          href="/main/center"
+          href="/main/personal"
         >
           <ion-icon :icon="personOutline" />
           <ion-label>自己</ion-label>

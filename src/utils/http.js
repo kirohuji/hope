@@ -58,7 +58,7 @@ const _axios = axios.create(config);
 
 _axios.interceptors.request.use(
   (cfg) => {
-    let user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.authToken) {
       cfg.headers.common["X-Auth-Token"] = user.authToken;
     }

@@ -122,7 +122,8 @@ export default defineComponent({
   },
   data () {
     return {
-      avatarVisible: false
+      avatarVisible: false,
+      image: '',
     }
   },
   setup () {
@@ -135,7 +136,7 @@ export default defineComponent({
   methods: {
     async takeProfilePicture () {
       // Take a picture or video, or load from the library
-      const image = await Camera.getPhoto({
+      this.image = await Camera.getPhoto({
         quality: 90,
         allowEditing: true,
         resultType: CameraResultType.Uri,
