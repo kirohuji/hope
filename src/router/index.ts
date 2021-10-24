@@ -27,7 +27,12 @@ const routes: Array<RouteRecordRaw> = [
     path: "/tab",
     component: () => import("@/views/Tab1.vue"),
   },
-
+  {
+    path: "/books/reader/:id",
+    name: "Reader",
+    component: () => import("@/views/Reader/index.vue"),
+    props: true,
+  },
   {
     path: "/welcome",
     component: Welcome,
@@ -47,7 +52,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "personal",
         component: () => import("@/views/Personal/index.vue"),
-      }
+      },
     ],
   },
 ];

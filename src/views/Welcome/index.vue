@@ -95,4 +95,7 @@ p {
 p b {
   color: var(--ion-text-color, #000000);
 }
+ion-content{
+  margin-bottom: var(--ion-safe-area-bottom);
+}
 </style>

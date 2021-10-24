@@ -1,4 +1,4 @@
-const module = "users"
+const module = "users";
 export class UserService {
   constructor(api) {
     this.makeUserService(api);
@@ -10,5 +10,11 @@ export class UserService {
   }
   insert(target) {
     return this.api.post(`${this.module}/`, target);
+  }
+  current() {
+    return this.api.get(`${this.module}/current`);
+  }
+  save(target) {
+    return this.api.post(`${this.module}/save`, target);
   }
 }

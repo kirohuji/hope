@@ -57,11 +57,13 @@ import {
   IonToolbar,
   IonTitle,
   IonInput,
-  IonButton
+  IonButton,
+  toastController
 } from '@ionic/vue'
 import { defineComponent } from "vue";
 import { arrowBackOutline } from "ionicons/icons"
 import { service, authService } from "./service";
+import { useRouter } from "vue-router";
 export default defineComponent({
   name: 'Personal',
   components: {
@@ -74,8 +76,10 @@ export default defineComponent({
     IonInput
   },
   setup () {
+    const router = useRouter();
     return {
-      arrowBackOutline
+      arrowBackOutline,
+      router
     }
   },
   data () {
@@ -88,11 +92,20 @@ export default defineComponent({
     }
   },
   methods: {
+    async openToast (title) {
+      const toast = await toastController
+        .create({
+          message: title,
+          duration: 2000
+        })
+      return toast.present();
+    },
     submit () {
       if (this.mode === 'login') {
         authService.login(this.account).then((res) => {
-          localStorage.setItem("user", JSON.stringify(res));
-          alert('登录成功')
+          localStorage.setItem("user", JSON.stringify(res.data));
+          this.openToast('登录成功')
+          this.router.push('/main/library')
         });
       } else {
         service.insert(this.account).then(() => {

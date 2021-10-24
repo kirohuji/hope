@@ -19,14 +19,14 @@
         >
           <ion-label>账户和安全</ion-label>
         </ion-item>
-        <ion-item detail>
+        <!-- <ion-item detail>
           <ion-label>意见反馈</ion-label>
         </ion-item>
         <ion-item detail>
           <ion-label>关于Hope</ion-label>
-        </ion-item>
+        </ion-item> -->
         <ion-item>
-          <ion-label @click="router.replace('/login')">退出登录</ion-label>
+          <ion-label @click="logout">退出登录</ion-label>
         </ion-item>
       </ion-list>
     </ion-content>
@@ -70,6 +70,12 @@ export default defineComponent({
     return {
       arrowBackOutline,
       router
+    }
+  },
+  methods: {
+    logout () {
+      localStorage.clear()
+      this.router.push('/login')
     }
   }
 })

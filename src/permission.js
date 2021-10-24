@@ -3,11 +3,12 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import getPageTitle from "@/utils/get-page-title";
 import { serviceContainer } from "@/composables/context-provider";
+import store from "./store";
 export const service = serviceContainer.authService;
+const userService = serviceContainer.userService;
+NProgress.configure({ showSpinner: false });
 
-NProgress.configure({ showSpinner: false }); 
-
-const whiteList = ["/login", "/auth-redirect", "/register"]; 
+const whiteList = ["/login", "/auth-redirect", "/register"];
 
 router.beforeEach(async (to, from, next) => {
   NProgress.start();
@@ -18,8 +19,15 @@ router.beforeEach(async (to, from, next) => {
   if (hasToken) {
     if (to.path === "/login") {
       next({ path: "/" });
-      NProgress.done(); 
+      NProgress.done();
     } else {
+      if (!store.getters.currentUser.profile.displayName) {
+        userService.current().then((res) => {
+          if (res.status === 200) {
+            store.commit("currentUser", res.data);
+          }
+        });
+      }
       next();
       NProgress.done();
     }

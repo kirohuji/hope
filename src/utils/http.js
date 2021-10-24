@@ -5,7 +5,7 @@ axios.defaults.headers.patch["Content-Type"] =
   "application/json; charset=utf-8";
 
 const config = {
-  baseURL: process.env.VUE_APP_API_URL,
+  baseURL:  process.env.VUE_APP_API_URL,
   timeout: 120 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };

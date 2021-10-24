@@ -22,12 +22,12 @@
           multiple="true"
           cancel-text="取消"
           ok-text="确定!"
-          v-model="topics"
-          :selectedText="topics.map(item=>item.label)"
+          v-model="select"
+          :selectedText="select"
         >
           <ion-select-option
-            compareWith="value"
-            :value="option"
+            compareWith="_id"
+            :value="option.value"
             v-for="(option,index) in options"
             :key="index"
           >{{option.label}}</ion-select-option>
@@ -43,7 +43,7 @@
   </ion-content>
 </template>
 
-<script lang="ts">
+<script>
 import {
   IonContent,
   IonHeader,
@@ -61,6 +61,8 @@ import {
   IonButton,
 } from "@ionic/vue";
 import { closeOutline } from "ionicons/icons";
+import { appServicesService } from "./service";
+import _ from 'lodash'
 export default {
   components: {
     IonContent,
@@ -80,31 +82,53 @@ export default {
   },
   name: "Modal",
   props: {
+    topics: {
+      type: Array,
+      default: () => []
+    },
     title: { type: String, default: "Super Modal" },
+    visible: Boolean
   },
-  setup() {
+  setup () {
     return {
       closeOutline,
-      options: [
-        {
-          label: "10月份",
-          value: "2021.10+",
-        },
-      ],
     };
   },
-  data() {
+  data () {
     return {
-      topics: [],
+      options: [],
+      select: [],
       content: "Content",
     };
   },
+  async created () {
+    await this.setTopics()
+  },
   methods: {
-    handleSubmit() {
-      (this as any).$emit("submit", {
-        topics: (this as any).topics,
+    handleCompare (current, compare) {
+      console.log(current, compare)
+    },
+    setTopics () {
+      appServicesService.user().then((res) => {
+        if (res.status === 200) {
+          const services = res.data[0].services;
+          this.options = _.flatten(_.union(_.compact(services.map(item => {
+            return item.topics || null;
+          }))))
+          this.select = this.topics
+        }
+      });
+    },
+    handleSubmit () {
+      this.$emit("submit", {
+        topics: this.select,
       });
     },
   },
 };
 </script>
+<style scoped>
+ion-footer {
+  margin-bottom: var(--ion-safe-area-bottom);
+}
+</style>

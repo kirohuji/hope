@@ -8,8 +8,9 @@ export class BooksService {
     this.api = api;
     return this;
   }
-  findBooksWithPosts() {
-    return this.api.get(`${this.module}/findBooksWithPosts`);
+  findBooksWithPosts(target) {
+    console.log(target)
+    return this.api.post(`${this.module}/findBooksWithPosts`, target);
   }
   findOne(target) {
     return this.api.get(`${this.module}/${target}`);

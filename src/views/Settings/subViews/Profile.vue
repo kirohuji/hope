@@ -7,7 +7,10 @@
           <ion-buttons slot="start">
             <ion-back-button href="/settings"></ion-back-button>
           </ion-buttons>
-          <ion-buttons slot="end">
+          <ion-buttons
+            slot="end"
+            @click="submit"
+          >
             保存
           </ion-buttons>
         </ion-toolbar>
@@ -22,7 +25,7 @@
             slot="end"
             size="large"
           >
-            <img src="/madison.jpg">
+            <img :src="current.profile.picture || '/madison.jpg'">
           </ion-avatar>
         </ion-item>
         <ion-item>
@@ -30,11 +33,15 @@
           <ion-input
             slot="end"
             class="name"
+            v-model="current.profile.displayName"
           ></ion-input>
         </ion-item>
         <ion-item>
           <ion-label>性别</ion-label>
-          <ion-select placeholder="Select One">
+          <ion-select
+            placeholder="Select One"
+            v-model="current.profile.sex"
+          >
             <ion-select-option value="f">女</ion-select-option>
             <ion-select-option value="m">男</ion-select-option>
           </ion-select>
@@ -42,18 +49,22 @@
         <ion-item detail>
           <ion-label>生日</ion-label>
           <ion-datetime
+            v-model="current.profile.birthday"
             display-format="MM/DD/YYYY"
             min="1994-03-14"
-            max="2012-12-09"
+            max="3000-12-09"
           ></ion-datetime>
 
         </ion-item>
-        <ion-item detail>
+        <!-- <ion-item detail>
           <ion-label>地域</ion-label>
-        </ion-item>
+        </ion-item> -->
         <ion-item lines="inset">
           <ion-label>个人描述</ion-label>
-          <ion-textarea autoGrow></ion-textarea>
+          <ion-textarea
+            autoGrow
+            v-model="current.profile.remark"
+          ></ion-textarea>
         </ion-item>
       </ion-list>
     </ion-content>
@@ -89,14 +100,17 @@ import {
   IonAvatar,
   IonModal,
   IonSelect,
-  IonSelectOption
+  IonSelectOption,
+  toastController
 } from '@ionic/vue'
 import { defineComponent } from "vue";
 import { arrowBackOutline } from "ionicons/icons"
 import { useRouter } from "vue-router";
 import Avatar from './Avatar.vue'
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-
+import { mapGetters } from 'vuex'
+import _ from 'lodash'
+import { service } from '../services'
 export default defineComponent({
   name: 'Profile',
   components: {
@@ -124,6 +138,10 @@ export default defineComponent({
     return {
       avatarVisible: false,
       image: '',
+      toast: '',
+      current: {
+        profile: {}
+      }
     }
   },
   setup () {
@@ -133,7 +151,41 @@ export default defineComponent({
       router
     }
   },
+  computed: {
+    ...mapGetters([
+      'currentUser'
+    ])
+  },
+  ionViewDidEnter () {
+    this.init(this.currentUser)
+  },
   methods: {
+    init (data) {
+      this.current = _.pick(_.cloneDeep(data), ['profile'])
+    },
+    async openToast () {
+      const toast = await toastController
+        .create({
+          message: '正在更新用户信息',
+          duration: 5000
+        })
+      return toast.present();
+    },
+    submit () {
+      this.toast = this.openToast()
+      service.save(this.current).then(res => {
+        // debugger
+        if (res.status === 200) {
+          service.current().then((res2) => {
+            if (res2.status === 200) {
+              this.$store.commit("currentUser", res2.data);
+              this.init(res2.data)
+              this.toast.dismiss()
+            }
+          });
+        }
+      })
+    },
     async takeProfilePicture () {
       // Take a picture or video, or load from the library
       this.image = await Camera.getPhoto({

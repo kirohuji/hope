@@ -19,12 +19,12 @@
               slot="start"
               size="large"
             >
-              <img src="/madison.jpg">
+              <img :src="currentUser.profile.picture || '/madison.jpg'">
             </ion-avatar>
             <ion-label>
-              <h1><b>Lourd</b></h1>
-              <p>手机号: 1309014381</p>
-              <p>签名</p>
+              <h1><b>{{currentUser.profile.displayName}}</b></h1>
+              <p>手机号: {{currentUser.phone}}</p>
+              <p>签名:{{currentUser.profile.remark}}</p>
             </ion-label>
           </ion-item>
           <!-- <ion-item
@@ -60,6 +60,7 @@ import {
 import { defineComponent } from "vue";
 import { arrowBackOutline } from "ionicons/icons"
 import { useRouter } from "vue-router";
+import { mapGetters } from 'vuex'
 export default defineComponent({
   name: 'Personal',
   components: {
@@ -71,6 +72,11 @@ export default defineComponent({
     IonAvatar,
     // IonButton
     // IonListHeader
+  },
+  computed: {
+    ...mapGetters([
+      'currentUser'
+    ])
   },
   setup () {
     const router = useRouter();
@@ -100,7 +106,7 @@ ion-item.avatar {
 } */
 .item.sc-ion-label-ios-h,
 .item .sc-ion-label-ios-h {
-  margin-top: -10px;
+  margin-top: -5px;
 }
 /* .background-layout {
   position: absolute;

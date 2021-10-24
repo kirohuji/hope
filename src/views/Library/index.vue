@@ -5,11 +5,11 @@
         <ion-toolbar>
           <ion-grid>
             <ion-row>
-              <ion-col size="1">
+              <!-- <ion-col size="1">
                 <ion-icon :icon="notificationsOutline"></ion-icon>
-              </ion-col>
-              <ion-col size="10">
-                <ion-searchbar />
+              </ion-col> -->
+              <ion-col size="11">
+                <ion-searchbar v-model="filter.name" />
               </ion-col>
               <ion-col size="1">
                 <ion-icon
@@ -22,60 +22,36 @@
         </ion-toolbar>
       </ion-header>
       <div class="filters">
-        <span class="filters-title">表示中:</span>
-        <ion-badge v-for="(tag,i) in filter.topics" :key="i">{{tag.label}}{{filter.topics.length===(i-1) ? ',' : ''}}</ion-badge>
+        <div style="display:flex">
+          <span class="filters-title">表示中:</span>
+          <ion-badge
+            v-for="(tag,i) in filter.topics"
+            :key="i"
+          >{{tag}}{{filter.topics.length===(i-1) ? ',' : ''}}</ion-badge>
+        </div>
+        <ion-icon
+          v-if="filter.topics.length"
+          style="margin-top: 0"
+          :icon="closeCircleOutline"
+          @click="clearFilter"
+        ></ion-icon>
       </div>
       <!-- <ExploreContainer name="Tab 1 page" /> -->
-      <ion-segment v-model="selectedType">
-        <ion-segment-button value="all">
+      <ion-segment
+        v-model="selectedType"
+        @ionChange="fetchByType(selectedType)"
+      >
+        <ion-segment-button value="All">
           <ion-label>すべて</ion-label>
         </ion-segment-button>
-        <ion-segment-button value="downloaded">
+        <ion-segment-button value="Downloaded">
           <ion-label>ダウンロード済み</ion-label>
         </ion-segment-button>
       </ion-segment>
-      <ion-list>
-        <ion-list-header v-if="selectedType === 'downloaded'">
-          <ion-label>Recent</ion-label>
-        </ion-list-header>
-        <ion-item v-if="selectedType === 'downloaded'">
-          <ion-thumbnail slot="start">
-            <img
-              style="height:100px"
-              src="https://semantic-ui.com/images/avatar2/large/kristy.png"
-            />
-          </ion-thumbnail>
-          <ion-label>Pokémon Yellow</ion-label>
-        </ion-item>
-        <ion-list-header>
-          <ion-label>List</ion-label>
-        </ion-list-header>
-        <ion-item>
-          <ion-thumbnail slot="start">
-            <img
-              style="height:100px"
-              src="https://semantic-ui.com/images/avatar2/large/kristy.png"
-            />
-          </ion-thumbnail>
-          <ion-label>
-            <ion-badge
-              style="float:right"
-              color="success"
-            >已经下载</ion-badge>
-            <h2>ECMAScript 6 入门</h2>
-            <p>阮一峰</p>
-            <h3>
-              <ion-progress-bar value="0.5"></ion-progress-bar>
-              50%
-            </h3>
-            <h3>
-              <ion-chip>
-                <ion-label>10月份</ion-label>
-              </ion-chip>
-            </h3>
-          </ion-label>
-        </ion-item>
-      </ion-list>
+      <BookList
+        :list="books"
+        @refresh="fetchByType(type)"
+      />
       <ion-modal
         :is-open="isOpenRef"
         css-class="filter-modal"
@@ -84,6 +60,8 @@
       >
         <Modal
           :data="data"
+          v-if="isOpenRef"
+          :topics="filter.topics"
           @close="handleClose"
           @submit="handleFilter"
           title="过滤器"
@@ -105,25 +83,27 @@ import {
   IonRow,
   IonCol,
   IonSearchbar,
-  IonList,
-  IonListHeader,
-  IonItem,
-  IonThumbnail,
   IonLabel,
   IonSegment,
   IonSegmentButton,
-  IonProgressBar,
-  IonBadge,
-  IonChip,
   IonModal,
 } from "@ionic/vue";
-import { notificationsOutline, optionsOutline } from "ionicons/icons";
+import {
+  notificationsOutline,
+  optionsOutline,
+  closeCircleOutline,
+} from "ionicons/icons";
 import { ref } from "vue";
 import Modal from "./ModalContent.vue";
 import { defineComponent } from "vue";
+import { service } from "./service";
+import localforage from "localforage";
+import _ from "lodash";
+import BookList from "./BookList.vue";
 // import ExploreContainer from "../../components/ExploreContainer.vue";
 interface Filter {
   topics: any;
+  name: string;
 }
 export default defineComponent({
   name: "Library",
@@ -136,27 +116,29 @@ export default defineComponent({
     IonGrid,
     IonRow,
     IonCol,
-    IonThumbnail,
-    IonListHeader,
     IonContent,
     IonPage,
-    IonList,
-    IonItem,
     IonLabel,
     IonSegment,
     IonSegmentButton,
-    IonProgressBar,
-    IonBadge,
-    IonChip,
+    // IonChip,
     IonModal,
+    BookList,
     Modal,
   },
   data() {
     return {
       filter: {
         topics: [],
+        name: "",
       },
-      selectedType: "downloaded",
+      booksKey: 1,
+      selectedType: "All",
+      books: [],
+      loading: false,
+      type: "All",
+      bookList: [],
+      group: {},
     };
   },
   setup() {
@@ -167,18 +149,96 @@ export default defineComponent({
       isOpenRef,
       setOpen,
       data,
+      closeCircleOutline,
       notificationsOutline,
       optionsOutline,
     };
   },
+  watch: {
+    "filter.name"(val) {
+      // _.debounce(this.fetchByType(this.selectedType),1000);
+      this.fetchByType(this.selectedType);
+    },
+  },
+  mounted() {
+    this.fetchByType = _.debounce(this.fetchByType, 500);
+    this.fetchByType(this.selectedType);
+  },
   methods: {
+    fetchByType(type: string) {
+      console.log(type);
+      // this.books = [];
+      switch (type) {
+        case "All":
+          this.fetchAllData();
+          break;
+        case "Repository":
+          this.fetchData();
+          break;
+        case "Downloaded":
+          this.loadData();
+          break;
+      }
+      this.booksKey++;
+    },
+    fetchAllData() {
+      this.loading = true;
+      this.books = [];
+      Promise.all([
+        service.findBooksWithPosts(this.filter),
+        localforage.getItem("books"),
+      ]).then(([remoteBooks, localBooks]: any) => {
+        // debugger
+        if (!localBooks) {
+          localBooks = [];
+        }
+        (this as any).books = _.unionBy(localBooks, remoteBooks.data, "md5");
+        // debugger
+        this.group = _.groupBy(this.books, "tag");
+        this.loading = false;
+      });
+    },
+    fetchData() {
+      this.loading = true;
+      this.books = [];
+      Promise.all([
+        service.findBooksWithPosts(this.filter),
+        localforage.getItem("books"),
+      ]).then(([remoteBooks, localBooks]: any) => {
+        if (!localBooks) {
+          localBooks = [];
+        }
+        (this as any).books = _.differenceBy(remoteBooks, localBooks, "md5");
+        this.group = _.groupBy(this.books, "tag");
+        this.loading = false;
+      });
+    },
+    loadData() {
+      this.loading = true;
+      this.books = [];
+      localforage.getItem("books").then((books: any) => {
+        if (books === null) {
+          books = [];
+        }
+        (this as any).books = books;
+        this.group = _.groupBy(this.books, "tag");
+        this.loading = false;
+      });
+    },
     handleClose() {
       this.setOpen(false);
+    },
+    clearFilter() {
+      this.filter = {
+        topics: [],
+        name: this.filter.name,
+      };
+      this.fetchByType(this.selectedType);
     },
     handleFilter(filter: Filter) {
       this.filter = filter;
       this.setOpen(false);
-      console.log(this.filter);
+      this.fetchByType(this.selectedType);
     },
   },
 });
@@ -198,16 +258,13 @@ ion-icon {
   margin-top: 4px;
   font-size: 24px;
 }
-ion-thumbnail {
-  height: 100px;
-  width: 80px;
-}
 .filters {
   height: 30px;
   background: rgba(0, 0, 0, 0.067);
   /* border-top: solid 1px rgba(0, 0, 0, 0.767); */
   border-bottom: solid 1px rgba(0, 0, 0, 0.167);
   display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 .filters .filters-title {
