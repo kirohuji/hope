@@ -271,4 +271,7 @@ ion-icon {
   font-size: 14px;
   margin: 0 8px;
 }
+/* ion-header {
+  margin-top: var(--ion-safe-area-top);
+} */
 </style>

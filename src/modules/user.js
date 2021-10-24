@@ -11,6 +11,9 @@ export class UserService {
   insert(target) {
     return this.api.post(`${this.module}/`, target);
   }
+  register(target) {
+    return this.api.post(`${this.module}/register`, target);
+  }
   current() {
     return this.api.get(`${this.module}/current`);
   }

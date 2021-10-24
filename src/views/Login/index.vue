@@ -20,12 +20,14 @@
           class="login-input"
           clear-input
           placeholder="密码"
+          type="password"
           v-model="account.password"
         ></ion-input>
         <ion-input
           class="login-input"
           clear-input
           placeholder="确定密码"
+          type="password"
           v-model="account.confirm"
           v-if="mode==='register'"
         ></ion-input>
@@ -87,6 +89,7 @@ export default defineComponent({
       account: {
         password: '',
         username: '',
+        confirm: ''
       },
       mode: 'login'
     }
@@ -96,7 +99,8 @@ export default defineComponent({
       const toast = await toastController
         .create({
           message: title,
-          duration: 2000
+          duration: 2000,
+          position: 'middle'
         })
       return toast.present();
     },
@@ -108,9 +112,17 @@ export default defineComponent({
           this.router.push('/main/library')
         });
       } else {
-        service.insert(this.account).then(() => {
-          alert('注册成功')
-        });
+        if (this.account.password !== this.account.confirm) {
+          this.openToast('确定密码必须一致')
+          return;
+        }
+        service.register(this.account).then((res) => {
+          // debugger
+          this.openToast('注册成功')
+          this.mode = 'login'
+        }).catch(e => {
+          this.openToast(e.message)
+        })
       }
     },
     changeMode () {

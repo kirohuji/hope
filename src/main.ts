@@ -25,7 +25,7 @@ import "@ionic/vue/css/display.css";
 import "./theme/variables.css";
 import "./theme/modal.css";
 import "./theme/global.css";
-import "./permission.js";
+// import "./permission.js";
 import store from "./store/index";
 // Call the element loader after the platform has been bootstrapped
 defineCustomElements(window);

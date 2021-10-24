@@ -74,7 +74,7 @@ export default defineComponent({
   },
   methods: {
     logout () {
-      localStorage.clear()
+      localStorage.removeItem('user')
       this.router.push('/login')
     }
   }
